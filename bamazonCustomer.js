@@ -76,7 +76,7 @@ function startApp() {
 
 function processRequest(data, cb) {
     var query1 = "SELECT stock_quantity FROM products WHERE ?";
-    var query2 = "UPDATE products SET ?"
+    var query2 = "UPDATE products SET ? WHERE ?"
     connection.query(query1, {item_id: data.id}, function(err, res) {
         if (err){
             return cb(err);
@@ -84,7 +84,7 @@ function processRequest(data, cb) {
         if (res[0].stock_quantity >= data.qty) {
             // we can do the purchase
             var newQty = {stock_quantity: res[0].stock_quantity - data.qty};
-            connection.query(query2, newQty, function(err, res) {
+            connection.query(query2, [newQty, {item_id: data.id}], function(err, res) {
                 if (err) {
                     return cb(err);
                 } 
